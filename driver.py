@@ -5,7 +5,6 @@ import time
 import os
 import json
 import jsonschema
-import sys
 
 
 def pr_debug(_data, _function, _dbg):
@@ -20,14 +19,14 @@ def pr_debug(_data, _function, _dbg):
         print "=" * 50
 
 
-def corp_api_call(clantag, _dbg):
+def corp_api_call(clan_tag, _dbg):
     # function that calls 'iamogurchik's star conflict players database using provided corp tag
     # returns a list with all the members with corp tag
 
     # setting up the link for a corporation tag
     _dbg_name = 'corp_api_call'
     link = 'http://ts2.scorpclub.ru/api/v1/findusers.php?search=clanTag%3D%22' \
-           + clantag + '%22&sort=nickname&DESC=&limit=400'
+           + clan_tag + '%22&sort=nickname&DESC=&limit=400'
 
     # get data from a web page
     page = urllib2.urlopen(link)
