@@ -135,4 +135,5 @@ def save_json_in_file(corptag, json_data, _dbg):
             json_file.close()
     else:
         print "JSON validation failed"
+    return path_to_corp_file
 
