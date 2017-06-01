@@ -16,6 +16,6 @@ def main(corptag, debug_level):
 
 if __name__ == '__main__':
     corpTag = 'NASA'
-    debug_level = 1
+    debug_level = 0
     main(corpTag, debug_level)
 

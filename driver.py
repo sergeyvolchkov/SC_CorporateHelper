@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 import datetime
 import time
 import os
+import json
+import jsonschema
+import sys
 
 
 def pr_debug(_data, _function, _dbg):
@@ -103,19 +106,33 @@ def organise_files(corptag, _dbg):
     return check_folder(corptag, tmp_path, _dbg)
 
 
+def validate_json_vs_schema(json_data, _dbg):
+    corp_schema = open("corporateMembers_schema.json").read()
+    pr_debug(corp_schema, 'validate_json_vs_schema()', _dbg)
+    try:
+        jsonschema.Draft4Validator(json.loads(corp_schema)).validate(json.loads(json_data))
+    except jsonschema.ValidationError as e:
+        pr_debug(e.message, 'validate_json_vs_schema()', _dbg)
+        return False
+    return True
+
+
 def save_json_in_file(corptag, json_data, _dbg):
     # checks if the file does not exists and saves as YYYY-MM-DD_{corpTag}.json file
     # each file contains single json object
     # iamogyrchik's database is refreshed once a day - hence only 1 file per day stored
 
-    path_to_corp_folder = organise_files(corptag, _dbg)
-    path_to_corp_file = os.path.join(path_to_corp_folder, str(datetime.date.today()) + "__" + corptag + ".json")
-    pr_debug(path_to_corp_file, 'save_json_in_file.path_to_corp_file:', _dbg)
-    if os.path.isfile(path_to_corp_file):
-        pr_debug("File {0} already exists, skipping".format(path_to_corp_file), "save_json_in_file()", _dbg)
+    if validate_json_vs_schema(json_data, _dbg):
+        path_to_corp_folder = organise_files(corptag, _dbg)
+        path_to_corp_file = os.path.join(path_to_corp_folder, str(datetime.date.today()) + "__" + corptag + ".json")
+        pr_debug(path_to_corp_file, 'save_json_in_file.path_to_corp_file:', _dbg)
+        if os.path.isfile(path_to_corp_file):
+            pr_debug("File {0} already exists, skipping".format(path_to_corp_file), "save_json_in_file()", _dbg)
+        else:
+            pr_debug("File {0} does not exists, creating".format(path_to_corp_file), "save_json_in_file()", _dbg)
+            json_file = open(path_to_corp_file, 'w')
+            json_file.write(json_data)
+            json_file.close()
     else:
-        pr_debug("File {0} does not exists, creating".format(path_to_corp_file), "save_json_in_file()", _dbg)
-        json_file = open(path_to_corp_file, 'w')
-        json_file.write(json_data)
-        json_file.close()
+        print "JSON validation failed"
 
