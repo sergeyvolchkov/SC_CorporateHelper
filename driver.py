@@ -2,6 +2,7 @@ import urllib2
 from bs4 import BeautifulSoup
 import datetime
 import time
+import os
 
 
 def pr_debug(_data, _function, _dbg):
@@ -84,4 +85,31 @@ def full_corp_dict(corptag, _dbg):
     return corporation_dict
 
 
+def check_folder(folder_name, _path, _dbg):
+    folder_path = os.path.join(_path, folder_name)
+    pr_debug(folder_path, 'check_folder.folder_path:', _dbg)
+    if os.path.isdir(folder_path):
+        pr_debug("Folder '{0}' exists".format(folder_path), 'check_folder()', _dbg)
+    else:
+        pr_debug("Folder '{0}' does not exists, creating".format(folder_path), 'check_folder()', _dbg)
+        os.makedirs(folder_path)
+    return folder_path
+
+
+def organise_files(corptag, _dbg):
+    tmp_path = check_folder("Corporate_Data", "..", _dbg)
+    return check_folder(corptag, tmp_path, _dbg)
+
+
+def save_json_in_file(corptag, json_data, _dbg):
+    path_to_corp_folder = organise_files(corptag, _dbg)
+    path_to_corp_file = os.path.join(path_to_corp_folder, str(datetime.date.today()) + "__" + corptag + ".json")
+    pr_debug(path_to_corp_file, 'save_json_in_file.path_to_corp_file:', _dbg)
+    if os.path.isfile(path_to_corp_file):
+        pr_debug("File {0} already exists, skipping".format(path_to_corp_file), "save_json_in_file()", _dbg)
+    else:
+        pr_debug("File {0} does not exists, creating".format(path_to_corp_file), "save_json_in_file()", _dbg)
+        json_file = open(path_to_corp_file, 'w')
+        json_file.write(json_data)
+        json_file.close()
 
