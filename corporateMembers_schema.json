@@ -1,0 +1,75 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "corporate members JSON schema",
+	"description": "JSON schema defines the sctructure for corporate members data",
+	"type": "object",
+	"properties":
+	{
+		"timeStamp":
+		{
+			"description": "when data has been acquired, in YYYY-MM-DD format",
+			"type": "string"
+		},
+		"corpTag":
+		{
+			"description": "corporation tag used in a request and whom all the memebrs belonge to",
+			"type": "string"
+		},
+		"headCount":
+		{
+			"description": "Members head count on a day of request",
+			"type": "number",
+			"multipleOf": 1,
+			"minimum": 0
+		},
+		"members":
+		{
+			"description": "information for each corporation member",
+			"type": "array",
+			"uniqueItems": true,
+			"items":
+			{
+				"type": "object",
+				"additionalProperties": false,
+				"properties":
+				{
+					"uid":
+					{
+						"description": "user ID in SC database",
+						"type": "string"
+					},
+					"nickname":
+					{
+						"description": "members current name, this can be cahnged by user, but players id can never change",
+						"type": "string"
+					},
+					"clanTag":
+					{
+						"description": "members current name, this can be cahnged by user, but players id can never change",
+						"type": "string"
+					},
+					"userLink":
+					{
+						"description": "each member's personal link his history",
+						"type": "string"
+					}
+				},
+				"required":
+				[
+					"uid",
+					"nickname",
+					"clanTag",
+					"userLink"
+				]
+			}
+		}
+	},
+	"required":
+	[
+		"timeStamp",
+		"corpTag",
+		"headCount",
+		"members"
+	],
+	"additionalProperties": false
+}
