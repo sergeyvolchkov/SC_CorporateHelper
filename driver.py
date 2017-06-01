@@ -86,6 +86,7 @@ def full_corp_dict(corptag, _dbg):
 
 
 def check_folder(folder_name, _path, _dbg):
+    # checks existence of the folder, relative to the current working path
     folder_path = os.path.join(_path, folder_name)
     pr_debug(folder_path, 'check_folder.folder_path:', _dbg)
     if os.path.isdir(folder_path):
@@ -97,11 +98,16 @@ def check_folder(folder_name, _path, _dbg):
 
 
 def organise_files(corptag, _dbg):
+    # ensures folder structure
     tmp_path = check_folder("Corporate_Data", "..", _dbg)
     return check_folder(corptag, tmp_path, _dbg)
 
 
 def save_json_in_file(corptag, json_data, _dbg):
+    # checks if the file does not exists and saves as YYYY-MM-DD_{corpTag}.json file
+    # each file contains single json object
+    # iamogyrchik's database is refreshed once a day - hence only 1 file per day stored
+
     path_to_corp_folder = organise_files(corptag, _dbg)
     path_to_corp_file = os.path.join(path_to_corp_folder, str(datetime.date.today()) + "__" + corptag + ".json")
     pr_debug(path_to_corp_file, 'save_json_in_file.path_to_corp_file:', _dbg)
