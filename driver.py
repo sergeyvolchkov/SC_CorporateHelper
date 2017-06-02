@@ -7,6 +7,10 @@ import json
 import jsonschema
 
 
+def get_date_today():
+    return str(datetime.date.today())
+
+
 def pr_debug(_data, _function, _dbg):
     # function that prints out debug data;
     # _data - text to print
@@ -123,7 +127,7 @@ def save_json_in_file(corptag, json_data, _dbg):
 
     if validate_json_vs_schema(json_data, _dbg):
         path_to_corp_folder = organise_files(corptag, _dbg)
-        path_to_corp_file = os.path.join(path_to_corp_folder, str(datetime.date.today()) + "__" + corptag + ".json")
+        path_to_corp_file = os.path.join(path_to_corp_folder, get_date_today() + "__" + corptag + ".json")
         pr_debug(path_to_corp_file, 'save_json_in_file.path_to_corp_file:', _dbg)
         if os.path.isfile(path_to_corp_file):
             pr_debug("File {0} already exists, skipping".format(path_to_corp_file), "save_json_in_file()", _dbg)
@@ -135,4 +139,11 @@ def save_json_in_file(corptag, json_data, _dbg):
     else:
         print "JSON validation failed"
     return path_to_corp_file
+
+
+def get_list_of_tags(_dbg):
+    path = check_folder('Corporate_Data', '..', _dbg)
+    list_of_folders = os.listdir(path)
+
+    return list_of_folders
 
