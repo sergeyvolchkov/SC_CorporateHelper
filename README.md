@@ -22,7 +22,7 @@ IN THE WORKS:
 - package all the libraries
 
 
-How to use (if you have all the neccessary libraries):
+How to use (if you have all the necessary libraries):
 - run main.py from a project folder
 - All data will be stored in a folder (relative to current working dir) ..\Corporate_Data
 
