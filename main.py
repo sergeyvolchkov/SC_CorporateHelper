@@ -5,7 +5,6 @@ import sys
 import pprint
 
 
-menu_actions = {}
 debug_level = 0     # debug_level control debug console output from functions. 1 - Enable; 0 - Disable.
 
 

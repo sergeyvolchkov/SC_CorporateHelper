@@ -24,7 +24,7 @@ def pr_debug(_data, _function, _dbg):
 
 
 def corp_api_call(clan_tag, _dbg):
-    # function that calls 'iamogurchik's star conflict players database using provided corp tag
+    # function that calls 'Igroman787' star conflict players database using provided corp tag
     # returns a list with all the members with corp tag
 
     # setting up the link for a corporation tag
@@ -78,14 +78,14 @@ def lists_to_user_dict(list_of_users, _dbg):
     return list_of_users_formatted
 
 
-def full_corp_dict(corptag, _dbg):
+def full_corp_dict(corp_tag, _dbg):
     # function that populates full dictionary with received data
     # returns a dict that is ready for conversion to json
     # datetime is "YYYY-MM-DD" format
 
-    list_from_web = corp_api_call(corptag, _dbg)
+    list_from_web = corp_api_call(corp_tag, _dbg)
     members = lists_to_user_dict(list_from_web, _dbg)
-    corporation_dict = {"timeStamp": str(datetime.date.today()), "corpTag": corptag, "headCount": len(members),
+    corporation_dict = {"timeStamp": str(datetime.date.today()), "corpTag": corp_tag, "headCount": len(members),
                         "members": members}
     pr_debug(corporation_dict, "full_corp_dict", _dbg)
     return corporation_dict
@@ -103,10 +103,10 @@ def check_folder(folder_name, _path, _dbg):
     return folder_path
 
 
-def organise_files(corptag, _dbg):
+def organise_files(corp_tag, _dbg):
     # ensures folder structure
     tmp_path = check_folder("Corporate_Data", "..", _dbg)
-    return check_folder(corptag, tmp_path, _dbg)
+    return check_folder(corp_tag, tmp_path, _dbg)
 
 
 def validate_json_vs_schema(json_data, _dbg):
@@ -120,14 +120,14 @@ def validate_json_vs_schema(json_data, _dbg):
     return True
 
 
-def save_json_in_file(corptag, json_data, _dbg):
+def save_json_in_file(corp_tag, json_data, _dbg):
     # checks if the file does not exists and saves as YYYY-MM-DD_{corpTag}.json file
     # each file contains single json object
-    # iamogyrchik's database is refreshed once a day - hence only 1 file per day stored
-
+    # Igroman787's database is refreshed once a day - hence only 1 file per day stored
+    path_to_corp_file = ""
     if validate_json_vs_schema(json_data, _dbg):
-        path_to_corp_folder = organise_files(corptag, _dbg)
-        path_to_corp_file = os.path.join(path_to_corp_folder, get_date_today() + "__" + corptag + ".json")
+        path_to_corp_folder = organise_files(corp_tag, _dbg)
+        path_to_corp_file = os.path.join(path_to_corp_folder, get_date_today() + "__" + corp_tag + ".json")
         pr_debug(path_to_corp_file, 'save_json_in_file.path_to_corp_file:', _dbg)
         if os.path.isfile(path_to_corp_file):
             pr_debug("File {0} already exists, skipping".format(path_to_corp_file), "save_json_in_file()", _dbg)
@@ -146,4 +146,3 @@ def get_list_of_tags(_dbg):
     list_of_folders = os.listdir(path)
 
     return list_of_folders
-
