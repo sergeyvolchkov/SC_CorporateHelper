@@ -27,3 +27,7 @@ How to use (if you have all the neccessary libraries):
 - All data will be stored in a folder (relative to current working dir) ..\Corporate_Data
 
 Screenshots:
+
+![alt text](http://i.imgur.com/hsoFS3k.png)
+
+![alt text](http://i.imgur.com/plLjIq2.png)
