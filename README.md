@@ -18,4 +18,12 @@ and saves the data in easily consumed JSON format
 It is recommended to run a script daily (or set up a daily auto-run) to have a daily data
 
 IN THE WORKS:
-report on corporation activity by comparing 2 last corporation records
+- report on corporation activity by comparing 2 last corporation records
+- package all the libraries
+
+
+How to use (if you have all the neccessary libraries):
+- run main.py from a project folder
+- All data will be stored in a folder (relative to current working dir) ..\Corporate_Data
+
+Screenshots:
