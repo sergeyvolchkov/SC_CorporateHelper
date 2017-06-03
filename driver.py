@@ -5,12 +5,20 @@ import time
 import os
 import json
 import jsonschema
+from pprint import pprint
 
 
 # debug level
 def set_dbg_lvl(dbg_value):
     global _dbg
     _dbg = dbg_value
+    return
+
+
+# setup Corporate_Data folder path
+def set_path_to_tags(path_to_tags):
+    global _path
+    _path = check_folder(path_to_tags)
     return
 
 
@@ -46,8 +54,8 @@ def pr_debug(_data, _function):
     if _dbg == 1:
         ts = time.time()
         st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-        print "[{0}] | [{1}:] {2}".format(st, _function, _data)
-        print "=" * 50
+        pprint("[{0}] | [{1}:] {2}".format(st, _function, _data))
+        pprint("=" * 50)
 
 
 def corp_api_call(clan_tag):
@@ -118,22 +126,22 @@ def full_corp_dict(corp_tag):
     return corporation_dict
 
 
-def check_folder(folder_name, _path):
+def check_folder(path):
     # checks existence of the folder, relative to the current working path
-    folder_path = os.path.join(_path, folder_name)
-    pr_debug(folder_path, 'check_folder.folder_path:')
-    if os.path.isdir(folder_path):
-        pr_debug("Folder '{0}' exists".format(folder_path), 'check_folder()')
+    pr_debug(path, 'check_folder.folder_path:')
+    if os.path.isdir(path):
+        pr_debug("Folder '{0}' exists".format(path), 'check_folder()')
     else:
-        pr_debug("Folder '{0}' does not exists, creating".format(folder_path), 'check_folder()')
-        os.makedirs(folder_path)
-    return folder_path
+        pr_debug("Folder '{0}' does not exists, creating".format(path), 'check_folder()')
+        os.makedirs(path)
+    return path
 
 
 def organise_files(corp_tag):
     # ensures folder structure
-    tmp_path = check_folder("Corporate_Data", "..")
-    return check_folder(corp_tag, tmp_path)
+    path_to_corp_tag = os.path.join(_path, corp_tag)
+    check_folder(path_to_corp_tag)
+    return path_to_corp_tag
 
 
 def validate_json_vs_schema(json_data):
@@ -171,13 +179,36 @@ def save_json_in_file(corp_tag, json_data):
 
 def get_list_of_tags():
     # returns a list of currently tracked corporation tags
-    path = check_folder('Corporate_Data', '..')
-    list_of_folders = os.listdir(path)
+    list_of_folders = os.listdir(_path)
     return list_of_folders
 
 
-def list_of_files_to_compare(corp_tag):
+def get_list_of_files_to_compare(corp_tag):
     # returns a list of available files for specified corp_tag
-    path_to_list = os.path.join('..', 'Corporate_Data', corp_tag)
+    path_to_list = os.path.join(_path, corp_tag)
     file_names = next(os.walk(path_to_list))[2]
-    return file_names
+    file_names_with_path = []
+    for i in file_names:
+        file_names_with_path.append(os.path.join(_path, i))
+        pr_debug(i, 'get_list_of_files_to_compare().i')
+        pr_debug(file_names_with_path, 'get_list_of_files_to_compare().for loop')
+    file_names_with_path.sort()
+    pr_debug(file_names_with_path, 'get_list_of_files_to_compare().return value')
+    return file_names_with_path
+
+
+def compare_2_latest_files(corp_tag):
+    list_of_files = get_list_of_files_to_compare(corp_tag)
+    pr_debug(list_of_files, 'compare_2_latest_files()')
+    if len(list_of_files) < 2:
+        print "There less than 2 records for this corporation"
+        print "Can not run report"
+        return
+    else:
+        compare_2_files(list_of_files[-2:])
+        return
+
+
+def compare_2_files(file_names):
+    pr_debug(file_names, 'compare_2_files()')
+    return

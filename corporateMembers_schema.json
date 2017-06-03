@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"title": "corporate members JSON schema",
-	"description": "JSON schema defines the sctructure for corporate members data",
+	"description": "JSON schema defines the structure for corporate members data",
 	"type": "object",
 	"properties":
 	{
@@ -40,12 +40,12 @@
 					},
 					"nickname":
 					{
-						"description": "members current name, this can be cahnged by user, but players id can never change",
+						"description": "members current name, this can be changed by user, but players id can never change",
 						"type": "string"
 					},
 					"clanTag":
 					{
-						"description": "members current name, this can be cahnged by user, but players id can never change",
+						"description": "members current name, this can be changed by user, but players id can never change",
 						"type": "string"
 					},
 					"userLink":

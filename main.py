@@ -1,10 +1,11 @@
 import driver
 import sys
-import pprint
+from pprint import pprint
+from os.path import join
 
-
-debug_level = 0
-version = "v0.03"
+debug_level = 1
+path_to_tags = join('..', 'Corporate_Data')
+version = "v0.04"
 
 
 # Main menu
@@ -14,7 +15,7 @@ def main_menu():
     print "Main Menu"
     driver.separator()
     print "List of current tags:"
-    pprint.pprint(driver.get_list_of_tags())
+    pprint(driver.get_list_of_tags())
     driver.separator()
     print "\n1. Update all corporation tags"
     print "2. Add new corporation tag"
@@ -72,12 +73,8 @@ def add_new_tag():
 # Menu 3
 def latest_activity():
     driver.separator()
-    print "latest_activity\n"
-    print "9. Back"
-    print "0. Quit"
-    driver.separator()
-    choice = raw_input(" >>  ")
-    exec_menu(choice)
+    driver.compare_2_latest_files('NASA')
+    exec_menu('9')
     return
 
 
@@ -111,7 +108,7 @@ def back():
 
 
 # Exit program
-def exit():
+def _exit():
     sys.exit()
 
 
@@ -124,7 +121,7 @@ menu_actions = {
     '4': activity_for_2_dates,
     '5': activity_for_period,
     '9': back,
-    '0': exit,
+    '0': _exit,
 }
 
 if __name__ == '__main__':
@@ -133,4 +130,5 @@ if __name__ == '__main__':
     print version
     # debug_level control debug console output from functions. 1 - Enable; 0 - Disable.
     print "Debug level is", driver.set_dbg_lvl(debug_level)
+    driver.set_path_to_tags(path_to_tags)
     main_menu()
