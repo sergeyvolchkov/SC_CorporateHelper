@@ -4,7 +4,7 @@ import pprint
 
 
 debug_level = 0
-version = "v0.02"
+version = "v0.03"
 
 
 # Main menu

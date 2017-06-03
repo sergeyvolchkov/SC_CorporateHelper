@@ -11,7 +11,7 @@ import jsonschema
 def set_dbg_lvl(dbg_value):
     global _dbg
     _dbg = dbg_value
-    return _dbg
+    return
 
 
 def cls():
@@ -178,5 +178,6 @@ def get_list_of_tags():
 
 def list_of_files_to_compare(corp_tag):
     # returns a list of available files for specified corp_tag
-    path = check_folder()
-    return
+    path_to_list = os.path.join('..', 'Corporate_Data', corp_tag)
+    file_names = next(os.walk(path_to_list))[2]
+    return file_names
