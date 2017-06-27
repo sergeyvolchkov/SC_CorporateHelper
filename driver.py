@@ -28,7 +28,7 @@ def cls():
 
 
 def separator():
-    print "="*80
+    print "="*104
     return
 
 
@@ -55,7 +55,17 @@ def pr_debug(_data, _function):
         ts = time.time()
         st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
         pprint("[{0}] | [{1}:] {2}".format(st, _function, _data))
-        pprint("=" * 50)
+        separator()
+
+
+def pr_debug_files(_filename, _label):
+    # function to print out file names, follows debug level
+    if _dbg == 1:
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        for i in _filename:
+            print "[{0}] | [{1}:] {2}".format(st, _label, i)
+            separator()
 
 
 def corp_api_call(clan_tag):
@@ -189,26 +199,98 @@ def get_list_of_files_to_compare(corp_tag):
     file_names = next(os.walk(path_to_list))[2]
     file_names_with_path = []
     for i in file_names:
-        file_names_with_path.append(os.path.join(_path, i))
+        file_names_with_path.append(os.path.join(path_to_list, i))
         pr_debug(i, 'get_list_of_files_to_compare().i')
         pr_debug(file_names_with_path, 'get_list_of_files_to_compare().for loop')
     file_names_with_path.sort()
-    pr_debug(file_names_with_path, 'get_list_of_files_to_compare().return value')
+    pr_debug_files(file_names_with_path, 'get_list_of_files_to_compare().return value')
     return file_names_with_path
 
 
 def compare_2_latest_files(corp_tag):
     list_of_files = get_list_of_files_to_compare(corp_tag)
-    pr_debug(list_of_files, 'compare_2_latest_files()')
+    pr_debug_files(list_of_files, 'compare_2_latest_files()')
     if len(list_of_files) < 2:
-        print "There less than 2 records for this corporation"
-        print "Can not run report"
+        print "There are less than 2 records for this corporation"
+        print "Unable to generate the report"
+        separator()
         return
     else:
-        compare_2_files(list_of_files[-2:])
+        delta_removed, delta_added, delta_renamed, delta_date = compare_2_files(list_of_files[-2:])
+        pr_debug(delta_removed, "compare_2_latest_files() - Removed records:")
+        pr_debug(delta_added, "compare_2_latest_files() - Added records:")
+        pr_debug(delta_renamed, "compare_2_latest_files() - Renamed records:")
+        pr_activity_result(delta_removed, delta_added, delta_renamed, delta_date)
         return
 
 
 def compare_2_files(file_names):
-    pr_debug(file_names, 'compare_2_files()')
+    pr_debug_files(file_names, 'compare_2_files()')
+
+    with open(file_names[1]) as from_recent_file:
+        file_recent = json.load(from_recent_file)
+    with open(file_names[0]) as from_older_file:
+        file_older = json.load(from_older_file)
+
+    pr_debug(file_recent, "Last known data:")
+    pr_debug(file_older, "Comparing to:")
+
+    delta_date = []
+    delta_added = []
+    delta_removed = []
+    delta_renamed = []
+
+    for x in file_recent["members"]:
+        if x not in file_older["members"]:
+            delta_added.append(x)
+
+    for x in file_older["members"]:
+        if x not in file_recent["members"]:
+            delta_removed.append(x)
+
+    for i in range(len(delta_removed)):
+        for x in delta_removed:
+            for y in delta_added:
+                if x["uid"] == y["uid"]:
+                    delta_added.remove(y)
+                    delta_removed.remove(x)
+                    y["oldName"] = x["nickname"]
+                    delta_renamed.append(y)
+
+    delta_date.append(file_older["timeStamp"])
+    delta_date.append(file_recent["timeStamp"])
+    return delta_removed, delta_added, delta_renamed, delta_date
+
+
+def pr_activity_result(delta_removed, delta_added, delta_renamed, delta_date):
+    print
+    print "Comparing Dates {0} >> {1}:\n".format(delta_date[0], delta_date[1])
+    print "Removed:"
+    if len(delta_removed) > 0:
+        for x in delta_removed:
+            pr_member(x)
+    else:
+        print "  none"
+
+    print "\nAdded:"
+    if len(delta_added) > 0:
+        for x in delta_added:
+            pr_member(x)
+    else:
+        print "  none"
+
+    print "\nRenamed:"
+    if len(delta_renamed) > 0:
+        for x in delta_renamed:
+            pr_member(x)
+    else:
+        print "  none"
+    separator()
+    return
+
+
+def pr_member(item):
+    print "  Name: {0:<15} | uid: {1:<9} | stats: {2}".format(item["nickname"], item["uid"], item["userLink"])
+    if "oldName" in item:
+        print "  From: {0:<15}\n".format(item["oldName"])
     return

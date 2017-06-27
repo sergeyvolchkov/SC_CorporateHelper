@@ -3,9 +3,9 @@ import sys
 from pprint import pprint
 from os.path import join
 
-debug_level = 1
+debug_level = 0
 path_to_tags = join('..', 'Corporate_Data')
-version = "v0.04"
+version = "v0.10"
 
 
 # Main menu
@@ -73,13 +73,18 @@ def add_new_tag():
 # Menu 3
 def latest_activity():
     driver.separator()
-    driver.compare_2_latest_files('NASA')
+    corp_tags = driver.get_list_of_tags()
+    for tag in corp_tags:
+        print "\nLatest activity for: " + tag
+        driver.compare_2_latest_files(tag)
+        driver.separator()
+        driver.separator()
     exec_menu('9')
     return
 
 
 # Menu 4
-def activity_for_2_dates():
+def full_activity():
     driver.separator()
     print "activity_for_2_dates\n"
     print "9. Back"
@@ -118,7 +123,7 @@ menu_actions = {
     '1': update_all_tags,
     '2': add_new_tag,
     '3': latest_activity,
-    '4': activity_for_2_dates,
+    '4': full_activity,
     '5': activity_for_period,
     '9': back,
     '0': _exit,
