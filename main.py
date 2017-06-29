@@ -5,7 +5,7 @@ from os.path import join
 
 debug_level = 0
 path_to_tags = join('..', 'Corporate_Data')
-version = "v0.10"
+version = "v0.12"
 
 
 # Main menu
@@ -17,12 +17,12 @@ def main_menu():
     print "List of current tags:"
     pprint(driver.get_list_of_tags())
     driver.separator()
-    print "\n1. Update all corporation tags"
-    print "2. Add new corporation tag"
-    print "\n3. Latest activity for all tracked corporations"
-    print "4. Activity for 2 selected dates (single corporation)"
-    print "5. Activity for a time period (single corporation)"
-    print "\n0. Quit"
+    print "\n 1. Update all corporation tags"
+    print " 2. Add new corporation tag"
+    print "\n 3. Latest activity for all tracked corporations"
+    print " 4. Activity for a time period (single corporation)"
+    print " 5. ___"
+    print "\n 0. Quit"
     driver.separator()
     choice = raw_input(" >>  ")
     exec_menu(choice)
@@ -84,21 +84,25 @@ def latest_activity():
 
 
 # Menu 4
-def full_activity():
+def activity_for_period():
     driver.separator()
-    print "activity_for_2_dates\n"
-    print "9. Back"
-    print "0. Quit"
+    corp_tags = driver.get_list_of_tags()
+    print "Select a corporation to proceed:"
+    for tag in corp_tags:
+        print "  {0:<2} - {1}".format(corp_tags.index(tag), tag)
+
+    selection = raw_input(" >>  ")
+
+    print "{:<4} activity_for_period\n"
     driver.separator()
-    choice = raw_input(" >>  ")
-    exec_menu(choice)
+    exec_menu('9')
     return
 
 
 # Menu 5
-def activity_for_period():
+def full_activity():
     driver.separator()
-    print "activity_for_period\n"
+    print "activity_for_2_dates\n"
     print "9. Back"
     print "0. Quit"
     driver.separator()
@@ -123,8 +127,8 @@ menu_actions = {
     '1': update_all_tags,
     '2': add_new_tag,
     '3': latest_activity,
-    '4': full_activity,
-    '5': activity_for_period,
+    '4': activity_for_period,
+    '5': full_activity,
     '9': back,
     '0': _exit,
 }
