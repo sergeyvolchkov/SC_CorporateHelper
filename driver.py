@@ -8,6 +8,7 @@ import jsonschema
 from pprint import pprint
 
 
+# version
 # debug level
 def set_dbg_lvl(dbg_value):
     global _dbg
