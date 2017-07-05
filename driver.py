@@ -219,14 +219,38 @@ def compare_2_latest_files(corp_tag):
         print "There are less than 2 records for this corporation"
         print "Unable to generate the report"
         separator()
-        return
     else:
         delta_removed, delta_added, delta_renamed, delta_date = compare_2_files(list_of_files[-2:])
         pr_debug(delta_removed, "compare_2_latest_files() - Removed records:")
         pr_debug(delta_added, "compare_2_latest_files() - Added records:")
         pr_debug(delta_renamed, "compare_2_latest_files() - Renamed records:")
         pr_activity_result(delta_removed, delta_added, delta_renamed, delta_date)
-        return
+    return
+
+
+def compare_range_of_files(corp_tag, range_of_files):
+    list_of_files = get_list_of_files_to_compare(corp_tag)
+    if len(list_of_files) > range_of_files:
+        list_of_files = list_of_files[0-range_of_files:]
+    separator()
+    print "\nChecking [{0}] history, last {1} records".format(corp_tag, range_of_files)
+    pr_debug(range_of_files, 'compare_range_of_files()')
+    pr_debug_files(list_of_files, 'compare_range_of_files()')
+    if len(list_of_files) < 2:
+        print "There are less than 2 records for this corporation"
+        print "Unable to generate the report"
+        separator()
+    else:
+        for i in range(len(list_of_files)):
+            pr_debug(i, 'compare_range_of_files() for loop index')
+            if i == len(list_of_files)-1:
+                break
+            delta_removed, delta_added, delta_renamed, delta_date = compare_2_files(list_of_files[i:i+2])
+            pr_debug(delta_removed, "compare_range_of_files() - Removed records:")
+            pr_debug(delta_added, "compare_range_of_files() - Added records:")
+            pr_debug(delta_renamed, "compare_range_of_files() - Renamed records:")
+            pr_activity_result(delta_removed, delta_added, delta_renamed, delta_date)
+    return
 
 
 def compare_2_files(file_names):

@@ -5,7 +5,7 @@ from os.path import join
 
 debug_level = 0
 path_to_tags = join('..', 'Corporate_Data')
-version = "v0.12"
+version = "v0.13"
 
 
 # Main menu
@@ -20,7 +20,7 @@ def main_menu():
     print "\n 1. Update all corporation tags"
     print " 2. Add new corporation tag"
     print "\n 3. Latest activity for all tracked corporations"
-    print " 4. Activity for a time period (single corporation)"
+    print " 4. Activity for a 30 days (single corporation)"
     print " 5. ___"
     print "\n 0. Quit"
     driver.separator()
@@ -73,10 +73,11 @@ def add_new_tag():
 # Menu 3
 def latest_activity():
     driver.separator()
+    number_of_records = 7
     corp_tags = driver.get_list_of_tags()
     for tag in corp_tags:
         print "\nLatest activity for: " + tag
-        driver.compare_2_latest_files(tag)
+        driver.compare_range_of_files(tag, number_of_records)
         driver.separator()
         driver.separator()
     exec_menu('9')
@@ -86,14 +87,18 @@ def latest_activity():
 # Menu 4
 def activity_for_period():
     driver.separator()
+    number_of_records = 30
     corp_tags = driver.get_list_of_tags()
-    print "Select a corporation to proceed:"
+    print "\nSelect a corporation to proceed:"
+    print "\n  {0:<2} - {1}".format(0, 'EXIT to Main Menu\n')
     for tag in corp_tags:
-        print "  {0:<2} - {1}".format(corp_tags.index(tag), tag)
+        print "  {0:<2} - {1}".format(corp_tags.index(tag)+1, tag)
 
-    selection = raw_input(" >>  ")
-
-    print "{:<4} activity_for_period\n"
+    selection = raw_input("\n >>  ")
+    if selection == '0':
+        exec_menu('9')
+    tag = corp_tags[int(selection)-1]
+    driver.compare_range_of_files(tag, number_of_records)
     driver.separator()
     exec_menu('9')
     return

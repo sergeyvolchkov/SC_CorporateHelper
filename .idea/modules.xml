@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://C:\Users\kzavgorodniy\PycharmProjects\Corporate_Data\.idea\Corporate_Data.iml" filepath="C:\Users\kzavgorodniy\PycharmProjects\Corporate_Data\.idea\Corporate_Data.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/SC_CorporateHelp.iml" filepath="$PROJECT_DIR$/.idea/SC_CorporateHelp.iml" />
     </modules>
   </component>
