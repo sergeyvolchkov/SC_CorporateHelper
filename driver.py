@@ -29,18 +29,20 @@ def cls():
 
 
 def separator():
-    print "="*104
+    print "="*105
     return
 
 
-def main_get_data(corp_tag):
-    # corp_tag used to get data and form final json object
-    corporate_dict = full_corp_dict(corp_tag)
-    corporate_json = json.dumps(corporate_dict, indent=4)
-    pr_debug(corporate_json, 'main')
-    pr_debug("current working dir >>  {0}".format(os.getcwd()), 'main')
-    saved_file = save_json_in_file(corp_tag, corporate_json)
-    return saved_file
+def pr_activity_header():
+    print "|------- {0} --------|----- {1} ----|--- {2} --|--- {3} --|--- {4} ---|--- {5} --|".\
+        format("Name", "Uid", "Games", "W/L", "KD", "KDA")
+    return
+
+
+def pr_activity_member(data):
+    print "|--{0:>16} --|--{1:>9} --|--{2:>7} --|--{3:>5} --|--{4:>5} --|--{5:>5} --|".\
+        format(data['name'], data['uid'], data['total_games'], data['avg_wl'], data['avg_kd'], data['avg_kda'])
+    return
 
 
 def get_date_today():
@@ -69,6 +71,71 @@ def pr_debug_files(_filename, _label):
             separator()
 
 
+def pr_transfer_result(delta_removed, delta_added, delta_renamed, delta_date):
+    print "\nComparing Dates {0} >> {1}:\n".format(delta_date[0], delta_date[1])
+    print "Removed:"
+    if len(delta_removed) > 0:
+        for x in delta_removed:
+            pr_member(x)
+    else:
+        print "  none"
+
+    print "\nAdded:"
+    if len(delta_added) > 0:
+        for x in delta_added:
+            pr_member(x)
+    else:
+        print "  none"
+
+    print "\nRenamed:"
+    if len(delta_renamed) > 0:
+        for x in delta_renamed:
+            pr_member(x)
+    else:
+        print "  none"
+    separator()
+    return
+
+
+def pr_member(item):
+    print "  Name: {0:<15} | uid: {1:<9} | stats: {2}".format(item["nickname"], item["uid"], item["userLink"])
+    if "oldName" in item:
+        print "  From: {0:<15}\n".format(item["oldName"])
+    return
+
+
+def souping_the_web(soup):
+    table = soup.find("table")
+    rows = table.find_all("tr")
+
+    table_contents = []  # stores your table here
+    for tr in rows:
+        # processing data by html tags creating a 2d list containing each row as shorter list
+        if rows.index(tr) == 0:
+            row_cells = [th.getText().strip() for th in tr.find_all('th') if th.getText().strip() != '']
+        # else:
+        #     row_cells = ([tr.find('th').getText()] if tr.find('th') else []) + [td.getText().strip() for td in
+        #                                                                         tr.find_all('td') if
+        #                                                                         td.getText().strip() != '']
+        else:
+            row_cells = ([tr.find('th').getText()] if tr.find('th') else []) + [td.getText().strip() for td in
+                                                                                tr.find_all('td')]
+        if len(row_cells) > 1:
+            table_contents += [row_cells]
+    pr_debug(table_contents, 'souping_the_web()')
+    return table_contents
+
+
+def main_get_data(corp_tag):
+    # corp_tag used to get data and form final json object
+    corporate_dict = full_corp_dict(corp_tag)
+    corporate_json = json.dumps(corporate_dict, indent=4)
+    pr_debug(corporate_json, 'main')
+    pr_debug("current working dir >>  {0}".format(os.getcwd()), 'main')
+    saved_file = save_json_in_file(corp_tag, corporate_json)
+    return saved_file
+
+
 def corp_api_call(clan_tag):
     # function that calls 'Igroman787' star conflict players database using provided corp tag
     # returns a list with all the members with corp tag
@@ -86,23 +153,28 @@ def corp_api_call(clan_tag):
     pr_debug(link, _dbg_name)
     pr_debug(page, _dbg_name)
     pr_debug(soup, _dbg_name)
+    return souping_the_web(soup)
 
-    table = soup.find("table")
-    rows = table.find_all("tr")
 
-    table_contents = []  # stores your table here
-    for tr in rows:
-        # processing data by html tags creating a 2d list containing each row as shorter list
-        if rows.index(tr) == 0:
-            row_cells = [th.getText().strip() for th in tr.find_all('th') if th.getText().strip() != '']
-        else:
-            row_cells = ([tr.find('th').getText()] if tr.find('th') else []) + [td.getText().strip() for td in
-                                                                                tr.find_all('td') if
-                                                                                td.getText().strip() != '']
-        if len(row_cells) > 1:
-            table_contents += [row_cells]
-    pr_debug(table_contents, _dbg_name)
-    return table_contents
+def player_api_call(player_uid):
+    # function that calls 'Igroman787' star conflict players database using provided uid of a player
+    # returns a dict with all recorded activity for that user
+
+    # setting up the link for a players uid
+    _dbg_name = 'player_api_call'
+    # link = http://ts2.scorpclub.ru/api/v1/userinfo.php?uid=177546
+    link = 'http://ts2.scorpclub.ru/api/v1/userinfo.php?uid=' + player_uid
+
+    # get data from a web page
+    page = urllib2.urlopen(link)
+    # process html with soup
+    soup = BeautifulSoup(page, "html.parser")
+
+    pr_debug(link, _dbg_name)
+    pr_debug(page, _dbg_name)
+    pr_debug(soup, _dbg_name)
+
+    return souping_the_web(soup)
 
 
 def lists_to_user_dict(list_of_users):
@@ -122,6 +194,54 @@ def lists_to_user_dict(list_of_users):
             list_of_users_formatted.append(temp_dict)
     pr_debug(list_of_users_formatted, 'lists_to_user_dict')
     return list_of_users_formatted
+
+
+def formatted_players_activity(player_uid):
+    players_activity_dump = player_api_call(player_uid)
+    dict_tags = players_activity_dump[0]
+    players_activity_formatted = []
+    for i in players_activity_dump:
+        if i != dict_tags:
+            temp_dict = dict(zip(dict_tags, i))
+            players_activity_formatted.append(temp_dict)
+    pr_debug(players_activity_formatted, 'formatted_players_activity()')
+    return players_activity_formatted
+
+
+def avg_player_activity(player_uid, amount_of_days):
+    player_data = formatted_players_activity(player_uid)
+    if len(player_data) > amount_of_days:
+        player_data = player_data[0-amount_of_days:]
+
+    avg_kd = 0
+    avg_kda = 0
+    avg_wl = 0
+    total_games = 0
+    avg_factor = 0
+
+    for i in player_data:
+        if int(i['gamePlayed+']) > 0:
+            avg_kd += float(i['K/D+'])
+            avg_kda += float(i['KDA+'])
+            avg_wl += float(i['W/L+'])
+            total_games += int(i['gamePlayed+'])
+            avg_factor += 1
+    avg_factor = float(avg_factor)
+
+    if avg_factor > 0:
+        avg_kd = float("{0:.1f}".format(avg_kd/avg_factor))
+        avg_kda = float("{0:.1f}".format(avg_kda/avg_factor))
+        avg_wl = float("{0:.1f}".format(avg_wl/avg_factor))
+
+    avg_data = {
+        'uid': player_uid,
+        'name': player_data[1]['nickname'],
+        'avg_kd': avg_kd,
+        'avg_kda': avg_kda,
+        'avg_wl': avg_wl,
+        'total_games': total_games
+    }
+    return avg_data
 
 
 def full_corp_dict(corp_tag):
@@ -225,7 +345,7 @@ def compare_2_latest_files(corp_tag):
         pr_debug(delta_removed, "compare_2_latest_files() - Removed records:")
         pr_debug(delta_added, "compare_2_latest_files() - Added records:")
         pr_debug(delta_renamed, "compare_2_latest_files() - Renamed records:")
-        pr_activity_result(delta_removed, delta_added, delta_renamed, delta_date)
+        pr_transfer_result(delta_removed, delta_added, delta_renamed, delta_date)
     return
 
 
@@ -250,7 +370,7 @@ def compare_range_of_files(corp_tag, range_of_files):
             pr_debug(delta_removed, "compare_range_of_files() - Removed records:")
             pr_debug(delta_added, "compare_range_of_files() - Added records:")
             pr_debug(delta_renamed, "compare_range_of_files() - Renamed records:")
-            pr_activity_result(delta_removed, delta_added, delta_renamed, delta_date)
+            pr_transfer_result(delta_removed, delta_added, delta_renamed, delta_date)
     return
 
 
@@ -292,35 +412,14 @@ def compare_2_files(file_names):
     return delta_removed, delta_added, delta_renamed, delta_date
 
 
-def pr_activity_result(delta_removed, delta_added, delta_renamed, delta_date):
-    print
-    print "Comparing Dates {0} >> {1}:\n".format(delta_date[0], delta_date[1])
-    print "Removed:"
-    if len(delta_removed) > 0:
-        for x in delta_removed:
-            pr_member(x)
-    else:
-        print "  none"
+def get_list_of_players_in_corp(corp_tag):
+    list_of_files = get_list_of_files_to_compare(corp_tag)
+    list_of_files = list_of_files[-1:]
+    list_of_players = []
+    with open(list_of_files[0]) as from_file:
+        corp_data = json.load(from_file)
 
-    print "\nAdded:"
-    if len(delta_added) > 0:
-        for x in delta_added:
-            pr_member(x)
-    else:
-        print "  none"
+    for i in corp_data['members']:
+        list_of_players.append(i['uid'])
+    return list_of_players
 
-    print "\nRenamed:"
-    if len(delta_renamed) > 0:
-        for x in delta_renamed:
-            pr_member(x)
-    else:
-        print "  none"
-    separator()
-    return
-
-
-def pr_member(item):
-    print "  Name: {0:<15} | uid: {1:<9} | stats: {2}".format(item["nickname"], item["uid"], item["userLink"])
-    if "oldName" in item:
-        print "  From: {0:<15}\n".format(item["oldName"])
-    return

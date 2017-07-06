@@ -5,7 +5,7 @@ from os.path import join
 
 debug_level = 0
 path_to_tags = join('..', 'Corporate_Data')
-version = "v0.14"
+version = "v0.20"
 
 
 # Main menu
@@ -19,9 +19,9 @@ def main_menu():
     driver.separator()
     print "\n 1. Update all corporation tags"
     print " 2. Add new corporation tag"
-    print "\n 3. Latest activity for all tracked corporations"
-    print " 4. Activity for a 30 days (single corporation)"
-    print " 5. ___"
+    print "\n 3. Latest transfers for all tracked corporations"
+    print " 4. Transfers for a 30 days (single corporation)"
+    print "\n 5. Corporate activity for last 10 days"
     print "\n 0. Quit"
     driver.separator()
     choice = raw_input(" >>  ")
@@ -72,6 +72,9 @@ def add_new_tag():
 
 # Menu 3
 def latest_activity():
+    driver.cls()
+    driver.separator()
+    driver.separator()
     driver.separator()
     number_of_records = 7
     corp_tags = driver.get_list_of_tags()
@@ -86,18 +89,10 @@ def latest_activity():
 
 # Menu 4
 def activity_for_period():
+    driver.cls()
     driver.separator()
     number_of_records = 30
-    corp_tags = driver.get_list_of_tags()
-    print "\nSelect a corporation to proceed:"
-    print "\n  {0:<2} - {1}".format(0, 'EXIT to Main Menu\n')
-    for tag in corp_tags:
-        print "  {0:<2} - {1}".format(corp_tags.index(tag)+1, tag)
-
-    selection = raw_input("\n >>  ")
-    if selection == '0':
-        exec_menu('9')
-    tag = corp_tags[int(selection)-1]
+    tag = sub_menu_corp_tag_selection()
     driver.compare_range_of_files(tag, number_of_records)
     driver.separator()
     exec_menu('9')
@@ -105,9 +100,31 @@ def activity_for_period():
 
 
 # Menu 5
-def full_activity():
+def corp_members_activity():
+    driver.cls()
     driver.separator()
-    print "activity_for_2_dates\n"
+    number_of_records = 14
+    tag = sub_menu_corp_tag_selection()
+    print "\n {0:>4}".format(tag)
+    print "Players activity for past {0}".format(number_of_records)
+    print "\n " + ("-" * 82)
+
+    driver.pr_activity_header()
+    list_of_players = driver.get_list_of_players_in_corp(tag)
+    for uid in list_of_players:
+        avg_player_data = driver.avg_player_activity(uid, number_of_records)
+        driver.pr_activity_member(avg_player_data)
+    print " " + ("-" * 82)
+    driver.separator()
+    exec_menu('9')
+    return
+
+
+# Menu 6
+def corp_avg_members_stats():
+    driver.cls()
+    driver.separator()
+    print "NOT IMPLEMENTED\n"
     print "9. Back"
     print "0. Quit"
     driver.separator()
@@ -126,6 +143,20 @@ def _exit():
     sys.exit()
 
 
+def sub_menu_corp_tag_selection():
+    corp_tags = driver.get_list_of_tags()
+    print "\nSelect a corporation to proceed:"
+    print "\n  {0:<2} - {1}".format(0, 'EXIT to Main Menu\n')
+    for tag in corp_tags:
+        print "  {0:<2} - {1}".format(corp_tags.index(tag)+1, tag)
+
+    selection = raw_input("\n >>  ")
+    if selection == '0':
+        exec_menu('9')
+    tag = corp_tags[int(selection)-1]
+    return tag
+
+
 # Menu definition
 menu_actions = {
     'main_menu': main_menu,
@@ -133,7 +164,8 @@ menu_actions = {
     '2': add_new_tag,
     '3': latest_activity,
     '4': activity_for_period,
-    '5': full_activity,
+    '5': corp_members_activity,
+    '6': corp_avg_members_stats,
     '9': back,
     '0': _exit,
 }
