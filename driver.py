@@ -113,10 +113,6 @@ def souping_the_web(soup):
         # processing data by html tags creating a 2d list containing each row as shorter list
         if rows.index(tr) == 0:
             row_cells = [th.getText().strip() for th in tr.find_all('th') if th.getText().strip() != '']
-        # else:
-        #     row_cells = ([tr.find('th').getText()] if tr.find('th') else []) + [td.getText().strip() for td in
-        #                                                                         tr.find_all('td') if
-        #                                                                         td.getText().strip() != '']
         else:
             row_cells = ([tr.find('th').getText()] if tr.find('th') else []) + [td.getText().strip() for td in
                                                                                 tr.find_all('td')]
@@ -212,6 +208,10 @@ def avg_player_activity(player_uid, amount_of_days):
     player_data = formatted_players_activity(player_uid)
     if len(player_data) > amount_of_days:
         player_data = player_data[0-amount_of_days:]
+    else:
+        # in case when history for a player just started - remove 1st element, since it contains full history stats
+        player_data.pop(0)
+
 
     avg_kd = 0
     avg_kda = 0
