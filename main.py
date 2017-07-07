@@ -5,7 +5,7 @@ from os.path import join
 
 debug_level = 0
 path_to_tags = join('..', 'Corporate_Data')
-version = "v0.22"
+version = "v0.24"
 
 
 # Main menu
@@ -21,7 +21,7 @@ def main_menu():
     print " 2. Add new corporation tag"
     print "\n 3. Latest transfers for all tracked corporations"
     print " 4. Transfers for a 30 days (single corporation)"
-    print "\n 5. Corporate activity for last 10 days"
+    print "\n 5. Corporate activity for last 14 days"
     print "\n 0. Quit"
     driver.separator()
     choice = raw_input(" >>  ")
@@ -105,16 +105,15 @@ def corp_members_activity():
     driver.separator()
     number_of_records = 14
     tag = sub_menu_corp_tag_selection()
-    print "\n {0:>4}".format(tag)
-    print "Players activity for past {0}".format(number_of_records)
-    print "\n " + ("-" * 82)
-
+    driver.separator()
+    print "\n\n[{0}] PvP Activity".format(tag)
+    print "Players activity for past {0}\n\n".format(number_of_records)
     driver.pr_activity_header()
     list_of_players = driver.get_list_of_players_in_corp(tag)
     for uid in list_of_players:
         avg_player_data = driver.avg_player_activity(uid, number_of_records)
         driver.pr_activity_member(avg_player_data)
-    print " " + ("-" * 82)
+    print "\n\n"
     driver.separator()
     exec_menu('9')
     return

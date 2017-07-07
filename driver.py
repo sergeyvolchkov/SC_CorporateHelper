@@ -34,13 +34,13 @@ def separator():
 
 
 def pr_activity_header():
-    print "|------- {0} --------|----- {1} ----|--- {2} --|--- {3} --|--- {4} ---|--- {5} --|".\
+    print "------- {0} ------------- {1} ------- {2} ----- {3} ----- {4} ------ {5} --".\
         format("Name", "Uid", "Games", "W/L", "KD", "KDA")
     return
 
 
 def pr_activity_member(data):
-    print "|--{0:>16} --|--{1:>9} --|--{2:>7} --|--{3:>5} --|--{4:>5} --|--{5:>5} --|".\
+    print "--{0:>16} ----{1:>9} ----{2:>7} ----{3:>5} ----{4:>5} ----{5:>5} --".\
         format(data['name'], data['uid'], data['total_games'], data['avg_wl'], data['avg_kd'], data['avg_kda'])
     return
 
