@@ -5,7 +5,7 @@ from os.path import join
 
 debug_level = 0
 path_to_tags = join('..', 'Corporate_Data')
-version = "v0.24"
+version = "v0.25"
 
 
 # Main menu

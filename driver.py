@@ -298,16 +298,16 @@ def save_json_in_file(corp_tag, json_data):
         pr_debug(path_to_corp_file, 'save_json_in_file.path_to_corp_file:')
 
         pr_debug("File {0} does not exists, creating".format(path_to_corp_file), "save_json_in_file()")
-        json_file = open(path_to_corp_file, 'w')
-        json_file.write(json_data)
-        json_file.close()
-        # if os.path.isfile(path_to_corp_file):
-        #     pr_debug("File {0} already exists, skipping".format(path_to_corp_file), "save_json_in_file()")
-        # else:
-        #     pr_debug("File {0} does not exists, creating".format(path_to_corp_file), "save_json_in_file()")
-        #     json_file = open(path_to_corp_file, 'w')
-        #     json_file.write(json_data)
-        #     json_file.close()
+        # json_file = open(path_to_corp_file, 'w')
+        # json_file.write(json_data)
+        # json_file.close()
+        if os.path.isfile(path_to_corp_file):
+            print "File {0} already exists, skipping".format(path_to_corp_file)
+        else:
+            print "File {0} does not exists, creating".format(path_to_corp_file)
+            json_file = open(path_to_corp_file, 'w')
+            json_file.write(json_data)
+            json_file.close()
     else:
         print "JSON validation failed"
     return path_to_corp_file
