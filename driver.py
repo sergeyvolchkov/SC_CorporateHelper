@@ -46,7 +46,9 @@ def pr_activity_member(data):
 
 
 def get_date_today():
-    return str(datetime.date.today())
+    # return str(datetime.date.today())
+    return str(get_date_from_server())
+
 
 
 def pr_debug(_data, _function):
@@ -206,26 +208,27 @@ def formatted_players_activity(player_uid):
 
 def avg_player_activity(player_uid, amount_of_days):
     player_data = formatted_players_activity(player_uid)
+    avg_kd = 0
+    avg_kda = 0
+    avg_wl = 0
+    total_games = 0
+    avg_factor = 0
+    player_name = player_data[0]["nickname"]
+
     if len(player_data) > amount_of_days:
         player_data = player_data[0-amount_of_days:]
     else:
         # in case when history for a player just started - remove 1st element, since it contains full history stats
         player_data.pop(0)
 
-
-    avg_kd = 0
-    avg_kda = 0
-    avg_wl = 0
-    total_games = 0
-    avg_factor = 0
-
-    for i in player_data:
-        if int(i['gamePlayed+']) > 0:
-            avg_kd += float(i['K/D+'])
-            avg_kda += float(i['KDA+'])
-            avg_wl += float(i['W/L+'])
-            total_games += int(i['gamePlayed+'])
-            avg_factor += 1
+    if len(player_data) > 0:
+        for i in player_data:
+            if int(i['gamePlayed+']) > 0:
+                avg_kd += float(i['K/D+'])
+                avg_kda += float(i['KDA+'])
+                avg_wl += float(i['W/L+'])
+                total_games += int(i['gamePlayed+'])
+                avg_factor += 1
     avg_factor = float(avg_factor)
 
     if avg_factor > 0:
@@ -235,7 +238,7 @@ def avg_player_activity(player_uid, amount_of_days):
 
     avg_data = {
         'uid': player_uid,
-        'name': player_data[1]['nickname'],
+        'name': player_name,
         'avg_kd': avg_kd,
         'avg_kda': avg_kda,
         'avg_wl': avg_wl,
@@ -422,4 +425,15 @@ def get_list_of_players_in_corp(corp_tag):
     for i in corp_data['members']:
         list_of_players.append(i['uid'])
     return list_of_players
+
+
+def get_date_from_server():
+    # function checks for latest date on igroman's data server
+    # currently the only way to check ofr latest date is to request stats for a player, and find latest record.
+    # using xKostyan's uid to get latest date
+    uid = '177546'
+    data = formatted_players_activity(uid)
+    data = data[-1:]
+    date = data[0]['date']
+    return date
 

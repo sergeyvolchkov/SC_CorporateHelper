@@ -5,7 +5,7 @@ from os.path import join
 
 debug_level = 0
 path_to_tags = join('..', 'Corporate_Data')
-version = "v0.25"
+version = "v0.26"
 
 
 # Main menu
@@ -172,8 +172,9 @@ menu_actions = {
 if __name__ == '__main__':
     # Launch main menu
     driver.cls()
-    print version
+    print "Current version: ", version
     # debug_level control debug console output from functions. 1 - Enable; 0 - Disable.
-    print "Debug level is", driver.set_dbg_lvl(debug_level)
+    print "Debug level: ", driver.set_dbg_lvl(debug_level)
+    print "Latest server data for: ", driver.get_date_from_server()
     driver.set_path_to_tags(path_to_tags)
     main_menu()
