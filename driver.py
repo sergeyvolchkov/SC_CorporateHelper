@@ -13,7 +13,7 @@ from pprint import pprint
 def set_dbg_lvl(dbg_value):
     global _dbg
     _dbg = dbg_value
-    return
+    return _dbg
 
 
 # setup Corporate_Data folder path
@@ -21,6 +21,13 @@ def set_path_to_tags(path_to_tags):
     global _path
     _path = check_folder(path_to_tags)
     return
+
+
+# get the latest date from the data server
+def set_server_date():
+    global _server_date
+    _server_date = get_date_today()
+    return _server_date
 
 
 def cls():
@@ -48,7 +55,6 @@ def pr_activity_member(data):
 def get_date_today():
     # return str(datetime.date.today())
     return str(get_date_from_server())
-
 
 
 def pr_debug(_data, _function):
@@ -254,7 +260,7 @@ def full_corp_dict(corp_tag):
 
     list_from_web = corp_api_call(corp_tag)
     members = lists_to_user_dict(list_from_web)
-    corporation_dict = {"timeStamp": str(datetime.date.today()), "corpTag": corp_tag, "headCount": len(members),
+    corporation_dict = {"timeStamp": str(_server_date), "corpTag": corp_tag, "headCount": len(members),
                         "members": members}
     pr_debug(corporation_dict, "full_corp_dict")
     return corporation_dict
@@ -297,13 +303,8 @@ def save_json_in_file(corp_tag, json_data):
     path_to_corp_file = ""
     if validate_json_vs_schema(json_data):
         path_to_corp_folder = organise_files(corp_tag)
-        path_to_corp_file = os.path.join(path_to_corp_folder, get_date_today() + "__" + corp_tag + ".json")
+        path_to_corp_file = os.path.join(path_to_corp_folder, str(_server_date) + "__" + corp_tag + ".json")
         pr_debug(path_to_corp_file, 'save_json_in_file.path_to_corp_file:')
-
-        pr_debug("File {0} does not exists, creating".format(path_to_corp_file), "save_json_in_file()")
-        # json_file = open(path_to_corp_file, 'w')
-        # json_file.write(json_data)
-        # json_file.close()
         if os.path.isfile(path_to_corp_file):
             print "File {0} already exists, skipping".format(path_to_corp_file)
         else:
@@ -437,3 +438,12 @@ def get_date_from_server():
     date = data[0]['date']
     return date
 
+
+def check_latest_file(corp_tag):
+    path_to_corp_folder = organise_files(corp_tag)
+    path_to_corp_file = os.path.join(path_to_corp_folder, str(_server_date) + "__" + corp_tag + ".json")
+    pr_debug(path_to_corp_file, 'save_json_in_file.path_to_corp_file:')
+    if os.path.isfile(path_to_corp_file):
+        return True
+    else:
+        return False

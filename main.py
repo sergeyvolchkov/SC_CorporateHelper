@@ -5,7 +5,7 @@ from os.path import join
 
 debug_level = 0
 path_to_tags = join('..', 'Corporate_Data')
-version = "v0.26"
+version = "v0.30"
 
 
 # Main menu
@@ -52,8 +52,12 @@ def update_all_tags():
     else:
         for corp_tag in list_of_tags:
             print "Getting the data for [{0}]".format(corp_tag)
-            print "Data is in '{0}' file".format(driver.main_get_data(corp_tag))
-            driver.separator()
+            if driver.check_latest_file(corp_tag) is False:
+                print "Data is in '{0}' file".format(driver.main_get_data(corp_tag))
+                driver.separator()
+            else:
+                print "Latest available data already exists, skipping"
+                driver.separator()
         print "All done! updated data for {0}".format(driver.get_date_today())
     exec_menu('9')
     return
@@ -170,11 +174,13 @@ menu_actions = {
 }
 
 if __name__ == '__main__':
-    # Launch main menu
+    # setup global variables
+    dbg = driver.set_dbg_lvl(debug_level)
+    date = driver.set_server_date()
+    driver.set_path_to_tags(path_to_tags)
     driver.cls()
     print "Current version: ", version
-    # debug_level control debug console output from functions. 1 - Enable; 0 - Disable.
-    print "Debug level: ", driver.set_dbg_lvl(debug_level)
-    print "Latest server data for: ", driver.get_date_from_server()
-    driver.set_path_to_tags(path_to_tags)
+    print "Debug level: ", dbg
+    print "Latest server data for: ", date
+    # Launch main menu
     main_menu()
