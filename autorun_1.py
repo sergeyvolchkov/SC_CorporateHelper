@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import main
 import driver
 import sys

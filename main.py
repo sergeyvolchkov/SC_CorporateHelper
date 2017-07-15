@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import driver
 import sys
 from pprint import pprint
