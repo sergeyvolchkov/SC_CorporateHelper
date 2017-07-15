@@ -154,10 +154,17 @@ def sub_menu_corp_tag_selection():
     for tag in corp_tags:
         print "  {0:<2} - {1}".format(corp_tags.index(tag)+1, tag)
 
-    selection = raw_input("\n >>  ")
-    if selection == '0':
-        exec_menu('9')
-    tag = corp_tags[int(selection)-1]
+    while True:
+        selection = raw_input("\n >>  ")
+        if selection == '0':
+            exec_menu('9')
+        try:
+            tag = corp_tags[int(selection)-1]
+            break
+        except LookupError:
+            print "Wrong Index"
+        except ValueError:
+            print "Input a Integer next time"
     return tag
 
 
