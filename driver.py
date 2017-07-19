@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import urllib2
 from bs4 import BeautifulSoup
 import datetime
@@ -146,8 +147,8 @@ def corp_api_call(clan_tag):
 
     # setting up the link for a corporation tag
     _dbg_name = 'corp_api_call'
-    link = 'http://ts2.scorpclub.ru/api/v1/findusers.php?search=clanTag%3D%22' \
-           + clan_tag + '%22&sort=nickname&DESC=&limit=400'
+    link = 'http://ts2.scorpclub.ru/api/v1/findusers.php?search=clanTag="' \
+           + clan_tag + '"&sort=nickname&DESC=&limit=400'
 
     # get data from a web page
     page = urllib2.urlopen(link)
