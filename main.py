@@ -6,7 +6,7 @@ from os.path import join
 
 debug_level = 0
 path_to_tags = join('..', 'Corporate_Data')
-version = "v0.30"
+version = "v0.31"
 
 
 # Main menu
@@ -116,7 +116,7 @@ def corp_members_activity():
     driver.pr_activity_header()
     list_of_players = driver.get_list_of_players_in_corp(tag)
     for uid in list_of_players:
-        avg_player_data = driver.avg_player_activity(uid, number_of_records)
+        avg_player_data = driver.avg_player_activity(uid, number_of_records, tag)
         driver.pr_activity_member(avg_player_data)
     print "\n\n"
     driver.separator()

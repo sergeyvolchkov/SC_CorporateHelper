@@ -213,7 +213,7 @@ def formatted_players_activity(player_uid):
     return players_activity_formatted
 
 
-def avg_player_activity(player_uid, amount_of_days):
+def avg_player_activity(player_uid, amount_of_days, corp_tag):
     player_data = formatted_players_activity(player_uid)
     avg_kd = 0
     avg_kda = 0
@@ -230,7 +230,7 @@ def avg_player_activity(player_uid, amount_of_days):
 
     if len(player_data) > 0:
         for i in player_data:
-            if int(i['gamePlayed+']) > 0:
+            if (int(i['gamePlayed+']) > 0) and (i['clanTag'] == corp_tag):
                 avg_kd += float(i['K/D+'])
                 avg_kda += float(i['KDA+'])
                 avg_wl += float(i['W/L+'])
